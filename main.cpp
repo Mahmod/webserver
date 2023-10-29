@@ -3,6 +3,19 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <fstream>
+
+std::string get_file_content(const std::string& file_path) {
+    std::ifstream file(file_path);
+    if (!file.is_open()) {
+        std::cerr << "Could not open the file!" << std::endl;
+        return "";
+    }
+
+    std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    file.close();
+    return content;
+}
 
 int main() {
     // Creating a socket
@@ -11,7 +24,6 @@ int main() {
     int opt = 1;
     int addrlen = sizeof(address);
     char buffer[1024] = {0};
-    const char* hello = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!";
 
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
         std::cerr << "Socket failed" << std::endl;
@@ -53,8 +65,12 @@ int main() {
 
         std::cout << "Request:\n" << buffer << std::endl;
 
-        send(new_socket, hello, strlen(hello), 0);
-        std::cout << "Hello message sent\n" << std::endl;
+        // Assuming the HTML file is named "index.html" and is located in the same directory as the executable
+        std::string html_content = get_file_content("index.html");
+        std::string response = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " + std::to_string(html_content.length()) + "\n\n" + html_content;
+
+        send(new_socket, response.c_str(), response.length(), 0);
+        std::cout << "HTML content sent\n" << std::endl;
 
         close(new_socket);
     }
