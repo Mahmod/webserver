@@ -95,7 +95,11 @@ int main() {
         std::string file_content = get_file_content(file_path);
         
         if (file_content.empty()) {
-            std::string not_found_response = "HTTP/1.1 404 Not Found\nContent-Type: text/plain\nContent-Length: 9\n\nNot Found";
+            file_content = get_file_content("./error.html");  // Custom HTML error page
+            if (file_content.empty()) {
+                file_content = "<html><body><h1>404 Not Found</h1></body></html>";  // Default error message if custom page is also not found
+            }
+            std::string not_found_response = "HTTP/1.1 404 Not Found\nContent-Type: text/html\nContent-Length: " + std::to_string(file_content.length()) + "\n\n" + file_content;
             send(new_socket, not_found_response.c_str(), not_found_response.length(), 0);
         } else {
             std::string response = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " + std::to_string(file_content.length()) + "\n\n" + file_content;
