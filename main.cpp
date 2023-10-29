@@ -23,11 +23,11 @@ std::string get_requested_file_path(const std::string& request) {
     std::istringstream request_stream(request);
     std::string method, path, protocol;
     request_stream >> method >> path >> protocol;
-    
+
     if (method != "GET") {
         return "";
     }
-    
+
     if (path == "/") {
         path = "/index.html";
     }
@@ -38,7 +38,7 @@ std::string get_requested_file_path(const std::string& request) {
         path.erase(pos, 2);
     }
 
-    return "." + path;  // Prepending a dot to construct the relative file path
+    return "./data" + path;  // Prepending the data folder to construct the relative file path
 }
 
 std::string get_content_type(const std::string& file_path) {
@@ -124,7 +124,7 @@ int main() {
         std::string content_type = get_content_type(file_path);
         
         if (file_content.empty()) {
-            file_content = get_file_content("./404.html");  // Custom HTML error page
+            file_content = get_file_content("./data/404.html");  // Custom HTML error page
             if (file_content.empty()) {
                 file_content = "<html><body><h1>404 Not Found</h1></body></html>";  // Default error message if custom page is also not found
             }
