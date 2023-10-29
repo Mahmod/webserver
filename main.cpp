@@ -92,10 +92,11 @@ int main() {
         std::cout << "Request:\n" << buffer << std::endl;
         
         std::string file_path = get_requested_file_path(buffer);
+        file_path = "data/" + file_path;  // Prepending "data" to the file path to prevent access to files outside "data
         std::string file_content = get_file_content(file_path);
         
         if (file_content.empty()) {
-            file_content = get_file_content("./error.html");  // Custom HTML error page
+            file_content = get_file_content("data/404.html");  // Custom HTML error page
             if (file_content.empty()) {
                 file_content = "<html><body><h1>404 Not Found</h1></body></html>";  // Default error message if custom page is also not found
             }
